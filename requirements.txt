@@ -1,6 +1,6 @@
-streamlit
-transformers
-torch
-reportlab
-pillow
-numpy
+streamlit==1.50.0
+transformers==4.46.3
+torch==2.5.1
+reportlab==4.2.5
+pillow==11.0.0
+numpy==1.26.4
