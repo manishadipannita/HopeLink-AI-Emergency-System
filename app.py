@@ -324,7 +324,10 @@ if mode == "🆘 I Need Help":
                 response["priority"]
             )
             st.divider()
-
+emergency_text = st.text_area(
+    "🚨 Describe your emergency situation",
+    placeholder="Example: My area is flooded and my family needs food."
+)
 if emergency_text:
 
     result = analyze_emergency(
