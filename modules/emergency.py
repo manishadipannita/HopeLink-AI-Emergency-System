@@ -36,7 +36,6 @@ CATEGORIES = [
 
 # =========================================================
 # KEYWORDS
-# Useful especially for Bangla/Banglish input
 # =========================================================
 
 KEYWORDS = {
@@ -49,16 +48,31 @@ KEYWORDS = {
         "meal",
         "meals",
         "rice",
+        "need food",
+        "i need food",
+        "food needed",
+        "no food",
         "খাবার",
-        "খেতে",
-        "ক্ষুধা"
+        "খাবার লাগবে",
+        "খাবার দরকার",
+        "খাবার প্রয়োজন",
+        "খেতে পারছি না",
+        "ক্ষুধা",
+        "চাল দরকার"
     ],
 
     "Water Assistance": [
         "water",
         "drinking water",
         "clean water",
+        "safe water",
+        "water needed",
+        "need water",
+        "no water",
         "পানি",
+        "পানি লাগবে",
+        "পানি দরকার",
+        "পানি প্রয়োজন",
         "জল",
         "খাবার পানি",
         "বিশুদ্ধ পানি"
@@ -70,10 +84,22 @@ KEYWORDS = {
         "blood donation",
         "need blood",
         "blood needed",
+        "blood required",
+        "need a blood donor",
+        "looking for blood",
+        "rokto",
+        "roktto",
+        "rokto lagbe",
+        "rokto dorkar",
+        "rokto proyojon",
+        "rokto chai",
         "রক্ত",
         "রক্ত লাগবে",
         "রক্ত দরকার",
-        "রক্ত প্রয়োজন"
+        "রক্ত প্রয়োজন",
+        "রক্ত চাই",
+        "রক্তদাতা",
+        "রক্ত দাতা"
     ],
 
     "Medicine Assistance": [
@@ -83,11 +109,15 @@ KEYWORDS = {
         "medicine needed",
         "need medicine",
         "need medicines",
+        "medicine required",
         "tablet",
         "tablets",
+        "drug",
         "ওষুধ",
         "ওষুধ লাগবে",
-        "ওষুধ দরকার"
+        "ওষুধ দরকার",
+        "ওষুধ প্রয়োজন",
+        "ওষুধ চাই"
     ],
 
     "Shelter Needed": [
@@ -95,12 +125,18 @@ KEYWORDS = {
         "place to stay",
         "somewhere to stay",
         "safe place to stay",
+        "place for shelter",
         "homeless",
+        "no place to stay",
         "stay tonight",
+        "need shelter",
         "থাকার জায়গা",
         "থাকার জায়গা দরকার",
+        "থাকার জায়গা লাগবে",
         "আশ্রয়",
-        "আশ্রয় দরকার"
+        "আশ্রয় দরকার",
+        "আশ্রয় লাগবে",
+        "বাড়ি নেই"
     ],
 
     "Rescue Needed": [
@@ -110,10 +146,16 @@ KEYWORDS = {
         "cannot get out",
         "can't get out",
         "unable to escape",
+        "need rescue",
+        "rescue needed",
         "আটকে",
         "আটকা",
+        "আটকে আছি",
         "বের হতে পারছি না",
-        "উদ্ধার"
+        "বের হতে পারতেছি না",
+        "উদ্ধার",
+        "উদ্ধার দরকার",
+        "উদ্ধার লাগবে"
     ],
 
     "Volunteer Assistance": [
@@ -122,9 +164,13 @@ KEYWORDS = {
         "need volunteers",
         "people to help",
         "people needed to help",
+        "need people",
+        "helping people",
         "স্বেচ্ছাসেবক",
+        "স্বেচ্ছাসেবক দরকার",
         "মানুষ দরকার",
-        "সাহায্য করার মানুষ"
+        "সাহায্য করার মানুষ",
+        "সাহায্যের মানুষ"
     ],
 
     "Medical Emergency": [
@@ -139,13 +185,22 @@ KEYWORDS = {
         "unconscious",
         "hurt",
         "patient",
+        "pain",
+        "medical help",
+        "medical assistance",
         "অসুস্থ",
+        "অসুস্থ হয়েছে",
         "আহত",
+        "আহত হয়েছে",
         "ডাক্তার",
         "হাসপাতাল",
         "অ্যাম্বুলেন্স",
         "রক্তপাত",
-        "রোগী"
+        "রোগী",
+        "ব্যথা",
+        "চিকিৎসা",
+        "চিকিৎসা দরকার",
+        "চিকিৎসা লাগবে"
     ],
 
     "Flood": [
@@ -153,27 +208,38 @@ KEYWORDS = {
         "flooded",
         "flooding",
         "water entered",
+        "water entered the house",
         "water level",
         "flood water",
+        "river overflow",
         "বন্যা",
+        "বন্যা হয়েছে",
         "প্লাবিত",
         "পানি ঢুকেছে",
-        "পানি বাড়ছে"
+        "বাড়িতে পানি ঢুকেছে",
+        "পানি বাড়ছে",
+        "নদীর পানি বেড়েছে"
     ],
 
     "Fire": [
         "fire",
         "burning",
         "flames",
+        "building on fire",
+        "house on fire",
         "আগুন",
+        "আগুন লেগেছে",
         "জ্বলছে",
-        "পুড়ছে"
+        "পুড়ছে",
+        "বাড়িতে আগুন"
     ],
 
     "Earthquake": [
         "earthquake",
         "earthquake happened",
-        "ভূমিকম্প"
+        "earthquake occurred",
+        "ভূমিকম্প",
+        "ভূমিকম্প হয়েছে"
     ],
 
     "Accident": [
@@ -182,8 +248,11 @@ KEYWORDS = {
         "collision",
         "road accident",
         "car accident",
+        "bike accident",
+        "motorcycle accident",
         "দুর্ঘটনা",
-        "এক্সিডেন্ট"
+        "এক্সিডেন্ট",
+        "সড়ক দুর্ঘটনা"
     ],
 
     "Missing Person": [
@@ -192,8 +261,12 @@ KEYWORDS = {
         "lost person",
         "can't find",
         "cannot find",
+        "lost child",
+        "missing child",
         "নিখোঁজ",
-        "হারিয়ে গেছে"
+        "হারিয়ে গেছে",
+        "খুঁজে পাচ্ছি না",
+        "শিশু নিখোঁজ"
     ]
 }
 
@@ -311,13 +384,16 @@ CRITICAL_WORDS = [
     "urgently",
     "child trapped",
     "baby trapped",
+
     "মারা যাচ্ছে",
     "মুমূর্ষু",
     "অজ্ঞান",
-    "অনেক রক্ত",
-    "রক্তপাত",
-    "আটকে",
-    "জরুরি"
+    "অনেক রক্তপাত",
+    "প্রচুর রক্তপাত",
+    "আটকে আছি",
+    "আটকে আছে",
+    "জরুরি",
+    "জরুরি সাহায্য"
 ]
 
 
@@ -335,6 +411,9 @@ HIGH_WORDS = [
     "no food",
     "hungry",
     "no water",
+    "rescue",
+    "trapped",
+
     "আহত",
     "অসুস্থ",
     "বন্যা",
@@ -342,7 +421,10 @@ HIGH_WORDS = [
     "দুর্ঘটনা",
     "ওষুধ",
     "রক্ত",
-    "ক্ষুধা"
+    "ক্ষুধা",
+    "পানি নেই",
+    "উদ্ধার",
+    "আটকে"
 ]
 
 
@@ -352,7 +434,7 @@ HIGH_WORDS = [
 
 def contains_keyword(text, keywords):
 
-    text_lower = text.lower()
+    text_lower = text.lower().strip()
 
     for keyword in keywords:
 
@@ -363,16 +445,12 @@ def contains_keyword(text, keywords):
 
 
 # =========================================================
-# DETECT NEEDS
+# DIRECT KEYWORD DETECTION
 # =========================================================
 
-def detect_needs(text):
+def detect_keyword_needs(text):
 
     detected = []
-
-    # ---------------------------------------------
-    # First: direct keyword detection
-    # ---------------------------------------------
 
     for category, keywords in KEYWORDS.items():
 
@@ -380,31 +458,14 @@ def detect_needs(text):
 
             detected.append(category)
 
-
-    # ---------------------------------------------
-    # Special logic:
-    # Blood should automatically imply medical need
-    # ---------------------------------------------
-
-    if "Blood Assistance" in detected:
-
-        if "Medical Emergency" not in detected:
-            detected.append("Medical Emergency")
+    return detected
 
 
-    # ---------------------------------------------
-    # Medicine should imply medical support
-    # ---------------------------------------------
+# =========================================================
+# AI DETECTION
+# =========================================================
 
-    if "Medicine Assistance" in detected:
-
-        if "Medical Emergency" not in detected:
-            detected.append("Medical Emergency")
-
-
-    # ---------------------------------------------
-    # AI detection
-    # ---------------------------------------------
+def detect_ai_need(text):
 
     try:
 
@@ -417,35 +478,118 @@ def detect_needs(text):
         top_label = ai_result["labels"][0]
         top_score = ai_result["scores"][0]
 
+        if top_score >= 0.50:
 
-        # Only use AI prediction if it is reasonably meaningful
-        if top_score >= 0.35:
-
-            if top_label not in detected:
-
-                detected.insert(0, top_label)
+            return top_label, top_score
 
     except Exception:
 
         pass
 
+    return None, 0
 
-    # ---------------------------------------------
+
+# =========================================================
+# DETECT ALL NEEDS
+# =========================================================
+
+def detect_needs(text):
+
+    detected = []
+
+    # -----------------------------------------------------
+    # 1. Direct keyword detection
+    # -----------------------------------------------------
+
+    keyword_needs = detect_keyword_needs(text)
+
+    for need in keyword_needs:
+
+        if need not in detected:
+
+            detected.append(need)
+
+
+    # -----------------------------------------------------
+    # 2. AI detection
+    #
+    # AI is used only when keyword detection does not
+    # clearly identify the situation.
+    # -----------------------------------------------------
+
+    ai_label, ai_score = detect_ai_need(text)
+
+    if ai_label:
+
+        # Do not allow AI to replace clear keyword matches
+        if not detected:
+
+            detected.append(ai_label)
+
+
+    # -----------------------------------------------------
+    # 3. Blood automatically means medical support
+    # -----------------------------------------------------
+
+    if "Blood Assistance" in detected:
+
+        if "Medical Emergency" not in detected:
+
+            detected.append("Medical Emergency")
+
+
+    # -----------------------------------------------------
+    # 4. Medicine automatically means medical support
+    # -----------------------------------------------------
+
+    if "Medicine Assistance" in detected:
+
+        if "Medical Emergency" not in detected:
+
+            detected.append("Medical Emergency")
+
+
+    # -----------------------------------------------------
+    # 5. Flood + trapped means rescue
+    # -----------------------------------------------------
+
+    if "Flood" in detected:
+
+        rescue_words = [
+            "trapped",
+            "stuck",
+            "cannot get out",
+            "can't get out",
+            "unable to escape",
+            "আটকে",
+            "আটকা",
+            "বের হতে পারছি না",
+            "উদ্ধার"
+        ]
+
+        if contains_keyword(text, rescue_words):
+
+            if "Rescue Needed" not in detected:
+
+                detected.append("Rescue Needed")
+
+
+    # -----------------------------------------------------
     # Remove duplicates
-    # ---------------------------------------------
+    # -----------------------------------------------------
 
     unique_needs = []
 
-    for item in detected:
+    for need in detected:
 
-        if item not in unique_needs:
+        if need not in unique_needs:
 
-            unique_needs.append(item)
+            unique_needs.append(need)
 
 
-    # ---------------------------------------------
+    # -----------------------------------------------------
     # Fallback
-    # ---------------------------------------------
+    # -----------------------------------------------------
 
     if not unique_needs:
 
@@ -461,17 +605,17 @@ def detect_needs(text):
 
 def detect_primary_crisis(text, needs):
 
+    # -----------------------------------------------------
+    # Physical crisis gets highest priority
+    # -----------------------------------------------------
+
     crisis_categories = [
-        "Flood",
         "Fire",
         "Earthquake",
+        "Flood",
         "Accident",
         "Missing Person"
     ]
-
-
-    # If explicit crisis keyword exists,
-    # prioritize it over generic AI prediction.
 
     for crisis in crisis_categories:
 
@@ -480,8 +624,9 @@ def detect_primary_crisis(text, needs):
             return crisis
 
 
-    # If no physical crisis exists,
-    # choose the most important need.
+    # -----------------------------------------------------
+    # Medical emergencies
+    # -----------------------------------------------------
 
     priority_order = [
         "Medical Emergency",
@@ -494,7 +639,6 @@ def detect_primary_crisis(text, needs):
         "Volunteer Assistance",
         "General Emergency"
     ]
-
 
     for item in priority_order:
 
@@ -515,9 +659,9 @@ def detect_severity(text, needs):
     text_lower = text.lower()
 
 
-    # ---------------------------------------------
+    # -----------------------------------------------------
     # Critical
-    # ---------------------------------------------
+    # -----------------------------------------------------
 
     for word in CRITICAL_WORDS:
 
@@ -526,9 +670,9 @@ def detect_severity(text, needs):
             return "Critical"
 
 
-    # ---------------------------------------------
+    # -----------------------------------------------------
     # High
-    # ---------------------------------------------
+    # -----------------------------------------------------
 
     for word in HIGH_WORDS:
 
@@ -537,19 +681,31 @@ def detect_severity(text, needs):
             return "High"
 
 
-    # ---------------------------------------------
-    # Multiple serious needs
-    # ---------------------------------------------
+    # -----------------------------------------------------
+    # Serious categories
+    # -----------------------------------------------------
 
     serious_needs = [
         "Medical Emergency",
         "Blood Assistance",
         "Rescue Needed",
         "Fire",
-        "Accident"
+        "Accident",
+        "Earthquake"
     ]
 
-    if any(item in needs for item in serious_needs):
+    for need in serious_needs:
+
+        if need in needs:
+
+            return "High"
+
+
+    # -----------------------------------------------------
+    # Multiple needs
+    # -----------------------------------------------------
+
+    if len(needs) >= 3:
 
         return "High"
 
@@ -572,7 +728,6 @@ def get_required_support(needs):
             if item not in support:
 
                 support.append(item)
-
 
     return support
 
@@ -640,13 +795,21 @@ def generate_explanation(text, needs, severity):
             )
 
 
-    if len(descriptions) == 1:
+    if not descriptions:
+
+        reason = "an emergency situation"
+
+    elif len(descriptions) == 1:
 
         reason = descriptions[0]
 
     elif len(descriptions) == 2:
 
-        reason = descriptions[0] + " and " + descriptions[1]
+        reason = (
+            descriptions[0]
+            + " and "
+            + descriptions[1]
+        )
 
     else:
 
@@ -675,6 +838,10 @@ def analyze_emergency(text):
     text = text.strip()
 
 
+    # -----------------------------------------------------
+    # Empty input
+    # -----------------------------------------------------
+
     if not text:
 
         return {
@@ -688,33 +855,47 @@ def analyze_emergency(text):
         }
 
 
-    # Detect all needs
+    # -----------------------------------------------------
+    # Detect needs
+    # -----------------------------------------------------
+
     needs = detect_needs(text)
 
 
-    # Detect main crisis
+    # -----------------------------------------------------
+    # Detect primary crisis
+    # -----------------------------------------------------
+
     primary_crisis = detect_primary_crisis(
         text,
         needs
     )
 
 
+    # -----------------------------------------------------
     # Detect severity
+    # -----------------------------------------------------
+
     severity = detect_severity(
         text,
         needs
     )
 
 
+    # -----------------------------------------------------
     # Required support
+    # -----------------------------------------------------
+
     required_help = get_required_support(
         needs
     )
 
 
-    # ---------------------------------------------
-    # AI Match Strength
-    # ---------------------------------------------
+    # -----------------------------------------------------
+    # AI match strength
+    #
+    # This is NOT shown as raw probability.
+    # -----------------------------------------------------
 
     try:
 
@@ -727,11 +908,11 @@ def analyze_emergency(text):
         score = ai_result["scores"][0]
 
 
-        if score >= 0.60:
+        if score >= 0.70:
 
             match_strength = "Strong"
 
-        elif score >= 0.35:
+        elif score >= 0.45:
 
             match_strength = "Good"
 
@@ -744,9 +925,9 @@ def analyze_emergency(text):
         match_strength = "Good"
 
 
-    # ---------------------------------------------
+    # -----------------------------------------------------
     # Explanation
-    # ---------------------------------------------
+    # -----------------------------------------------------
 
     explanation = generate_explanation(
         text,
@@ -755,13 +936,17 @@ def analyze_emergency(text):
     )
 
 
+    # -----------------------------------------------------
+    # Final result
+    # -----------------------------------------------------
+
     return {
 
         "type": primary_crisis,
 
         "needs": needs,
 
-        # Kept only for compatibility with old code
+        # Kept for compatibility with old app.py
         "confidence": 0,
 
         "match_strength": match_strength,
