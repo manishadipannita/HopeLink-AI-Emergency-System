@@ -72,8 +72,8 @@ st.sidebar.info(
 st.sidebar.markdown("---")
 
 st.sidebar.caption(
-    "⚠️ In a real emergency, contact local emergency "
-    "services first."
+    "⚠️ In a real emergency, contact local "
+    "emergency services first."
 )
 
 
@@ -124,6 +124,10 @@ if role == "🆘 I Need Help":
     )
 
 
+    # =====================================================
+    # EMERGENCY INPUT
+    # =====================================================
+
     emergency_text = st.text_area(
         "Explain your situation:",
         placeholder=(
@@ -160,7 +164,6 @@ if role == "🆘 I Need Help":
                     emergency_text
                 )
 
-
             st.session_state["result"] = result
 
             st.session_state[
@@ -176,6 +179,10 @@ if role == "🆘 I Need Help":
 
         result = st.session_state["result"]
 
+
+        # =================================================
+        # SUCCESS MESSAGE
+        # =================================================
 
         st.success(
             "Emergency Analysis Completed"
@@ -196,10 +203,12 @@ if role == "🆘 I Need Help":
         )
 
 
-        # Primary crisis
+        # =================================================
+        # PRIMARY CRISIS
+        # =================================================
 
         st.markdown(
-            f"### 🚨 Primary Crisis: **{result['type']}**"
+            f"### 🚨 Primary Crisis: **{result.get('type', 'General Emergency')}**"
         )
 
 
@@ -211,10 +220,9 @@ if role == "🆘 I Need Help":
             "### 🤝 Detected Needs"
         )
 
-
         needs = result.get(
             "needs",
-            [result["type"]]
+            [result.get("type", "General Emergency")]
         )
 
 
@@ -270,7 +278,10 @@ if role == "🆘 I Need Help":
         )
 
 
-        severity = result["severity"]
+        severity = result.get(
+            "severity",
+            "Medium"
+        )
 
 
         if severity == "Critical":
@@ -299,7 +310,7 @@ if role == "🆘 I Need Help":
 
 
         # =================================================
-        # WHY
+        # WHY HOPELINK RECOMMENDED THIS
         # =================================================
 
         st.markdown("---")
@@ -364,21 +375,45 @@ if role == "🆘 I Need Help":
         try:
 
             resource = recommend_resources(
-                result["type"]
+                result.get(
+                    "type",
+                    "General Emergency"
+                )
             )
 
 
-            centers = resource.get(
-                "centers",
-                []
-            )
+            # ---------------------------------------------
+            # Handle dictionary response
+            # ---------------------------------------------
+
+            if isinstance(resource, dict):
+
+                centers = resource.get(
+                    "centers",
+                    resource.get(
+                        "emergency_centers",
+                        []
+                    )
+                )
+
+                help_list = resource.get(
+                    "help",
+                    resource.get(
+                        "available_help",
+                        []
+                    )
+                )
+
+            else:
+
+                centers = []
+
+                help_list = []
 
 
-            help_list = resource.get(
-                "help",
-                []
-            )
-
+            # ---------------------------------------------
+            # Emergency Centers
+            # ---------------------------------------------
 
             if centers:
 
@@ -394,6 +429,10 @@ if role == "🆘 I Need Help":
                     )
 
 
+            # ---------------------------------------------
+            # Available Help
+            # ---------------------------------------------
+
             if help_list:
 
                 st.markdown(
@@ -408,10 +447,15 @@ if role == "🆘 I Need Help":
                     )
 
 
+            # ---------------------------------------------
+            # No resources
+            # ---------------------------------------------
+
             if not centers and not help_list:
 
                 st.info(
-                    "No specific resources found."
+                    "No specific resources are currently "
+                    "available for this emergency type."
                 )
 
 
@@ -437,14 +481,63 @@ if role == "🆘 I Need Help":
         try:
 
             response = generate_response(
-                result["type"],
-                result["severity"]
+                result.get(
+                    "type",
+                    "General Emergency"
+                ),
+                result.get(
+                    "severity",
+                    "Medium"
+                )
             )
 
 
-            st.success(
-                response
-            )
+            # ---------------------------------------------
+            # If response is a dictionary
+            # ---------------------------------------------
+
+            if isinstance(response, dict):
+
+                message = response.get(
+                    "message",
+                    "Please stay safe and seek "
+                    "appropriate emergency support."
+                )
+
+                priority = response.get(
+                    "priority",
+                    result.get(
+                        "severity",
+                        "Medium"
+                    )
+                )
+
+
+                st.success(
+                    message
+                )
+
+
+                st.caption(
+                    f"Priority Level: {priority}"
+                )
+
+
+            # ---------------------------------------------
+            # If response is normal text
+            # ---------------------------------------------
+
+            else:
+
+                st.success(
+                    response
+                )
+
+
+                st.caption(
+                    f"Priority Level: "
+                    f"{result.get('severity', 'Medium')}"
+                )
 
 
         except Exception:
@@ -470,14 +563,26 @@ if role == "🆘 I Need Help":
         try:
 
             tips = get_emergency_tips(
-                result["type"]
+                result.get(
+                    "type",
+                    "General Emergency"
+                )
             )
 
 
-            for tip in tips:
+            if tips:
 
-                st.markdown(
-                    f"📌 {tip}"
+                for tip in tips:
+
+                    st.markdown(
+                        f"📌 {tip}"
+                    )
+
+            else:
+
+                st.info(
+                    "Please prioritize your safety "
+                    "and contact local emergency services."
                 )
 
 
@@ -490,7 +595,7 @@ if role == "🆘 I Need Help":
 
 
         # =================================================
-        # REPORT
+        # REPORT GENERATOR
         # =================================================
 
         st.markdown("---")
@@ -561,15 +666,27 @@ else:
     )
 
 
+    # =====================================================
+    # VOLUNTEER NAME
+    # =====================================================
+
     volunteer_name = st.text_input(
         "Your Name"
     )
 
 
+    # =====================================================
+    # LOCATION
+    # =====================================================
+
     volunteer_location = st.text_input(
         "Your Location"
     )
 
+
+    # =====================================================
+    # HELP OPTIONS
+    # =====================================================
 
     st.markdown(
         "### What kind of help can you provide?"
@@ -592,6 +709,10 @@ else:
     )
 
 
+    # =====================================================
+    # AVAILABILITY
+    # =====================================================
+
     availability = st.selectbox(
         "Availability:",
         [
@@ -601,6 +722,10 @@ else:
         ]
     )
 
+
+    # =====================================================
+    # REGISTER
+    # =====================================================
 
     if st.button(
         "🤝 Register as a Helper",
