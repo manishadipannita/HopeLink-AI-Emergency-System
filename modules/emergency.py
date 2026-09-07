@@ -1,7 +1,10 @@
 from transformers import pipeline
 
 
-# Load AI model
+# ==========================
+# LOAD AI MODEL
+# ==========================
+
 classifier = pipeline(
     "zero-shot-classification",
     model="facebook/bart-large-mnli",
@@ -9,65 +12,140 @@ classifier = pipeline(
 )
 
 
+# ==========================
+# ANALYZE EMERGENCY
+# ==========================
 
 def analyze_emergency(text):
 
+    text = text.strip()
+
+    if not text:
+        return {
+            "type": "Unknown",
+            "confidence": 0,
+            "severity": "Low",
+            "required_help": [
+                "Please describe your situation"
+            ]
+        }
+
+
+    # ==========================
+    # POSSIBLE EMERGENCY TYPES
+    # ==========================
+
     categories = [
+        "Food Assistance",
+        "Water Assistance",
+        "Blood Assistance",
+        "Medical Emergency",
+        "Medicine Assistance",
+        "Shelter Needed",
+        "Rescue Needed",
+        "Volunteer Assistance",
         "Flood",
         "Fire",
-        "Medical Emergency",
         "Earthquake",
         "Accident",
-        "Shelter Needed"
+        "Missing Person",
+        "General Emergency"
     ]
 
 
+    # ==========================
+    # AI CLASSIFICATION
+    # ==========================
+
     result = classifier(
         text,
-        categories
+        categories,
+        hypothesis_template="This person's situation is about {}."
     )
 
 
     emergency_type = result["labels"][0]
+
     confidence = round(
         result["scores"][0] * 100,
         2
     )
 
 
-    severity = "Low"
+    # ==========================
+    # SEVERITY ANALYSIS
+    # ==========================
+
+    text_lower = text.lower()
 
 
-    if confidence > 70:
-        severity = "High"
+    critical_words = [
+        "trapped",
+        "dying",
+        "unconscious",
+        "not breathing",
+        "severe bleeding",
+        "heavy bleeding",
+        "critical",
+        "life threatening",
+        "life-threatening",
+        "can't breathe",
+        "cannot breathe",
+        "fire",
+        "stuck",
+        "help me urgently"
+    ]
 
-    if any(
-        word in text.lower()
-        for word in [
-            "trapped",
-            "dying",
-            "critical",
-            "urgent",
-            "child",
-            "fire"
-        ]
-    ):
+
+    high_words = [
+        "urgent",
+        "urgently",
+        "emergency",
+        "injured",
+        "seriously hurt",
+        "danger",
+        "dangerous",
+        "no food",
+        "no water",
+        "homeless"
+    ]
+
+
+    if any(word in text_lower for word in critical_words):
+
         severity = "Critical"
 
+    elif any(word in text_lower for word in high_words):
 
+        severity = "High"
+
+    else:
+
+        severity = "Low"
+
+
+    # ==========================
+    # REQUIRED SUPPORT
+    # ==========================
 
     support = {
 
-        "Flood": [
+        "Food Assistance": [
             "Food Supply",
-            "Temporary Shelter",
-            "Rescue Team"
+            "Food Distribution",
+            "Local Volunteers"
         ],
 
-        "Fire": [
-            "Fire Service",
-            "Rescue Team",
-            "Emergency Transport"
+        "Water Assistance": [
+            "Clean Drinking Water",
+            "Water Distribution",
+            "Local Volunteers"
+        ],
+
+        "Blood Assistance": [
+            "Blood Donor",
+            "Hospital Support",
+            "Medical Assistance"
         ],
 
         "Medical Emergency": [
@@ -76,22 +154,66 @@ def analyze_emergency(text):
             "Doctor Assistance"
         ],
 
-        "Earthquake": [
-            "Rescue Team",
-            "Shelter",
-            "Medical Support"
-        ],
-
-        "Accident": [
-            "Emergency Transport",
-            "Medical Support"
+        "Medicine Assistance": [
+            "Medicine Supply",
+            "Pharmacy Support",
+            "Medical Assistance"
         ],
 
         "Shelter Needed": [
             "Temporary Shelter",
-            "Food Supply"
-        ]
+            "Food Supply",
+            "Basic Necessities"
+        ],
 
+        "Rescue Needed": [
+            "Rescue Team",
+            "Emergency Responders",
+            "Emergency Transport"
+        ],
+
+        "Volunteer Assistance": [
+            "Local Volunteers",
+            "Humanitarian Organizations",
+            "Emergency Support"
+        ],
+
+        "Flood": [
+            "Rescue Team",
+            "Food Supply",
+            "Temporary Shelter",
+            "Clean Water"
+        ],
+
+        "Fire": [
+            "Fire Service",
+            "Rescue Team",
+            "Emergency Transport"
+        ],
+
+        "Earthquake": [
+            "Rescue Team",
+            "Temporary Shelter",
+            "Medical Support",
+            "Food Supply"
+        ],
+
+        "Accident": [
+            "Emergency Transport",
+            "Medical Support",
+            "Ambulance"
+        ],
+
+        "Missing Person": [
+            "Search and Rescue Team",
+            "Local Volunteers",
+            "Emergency Authorities"
+        ],
+
+        "General Emergency": [
+            "Emergency Support",
+            "Local Volunteers"
+        ]
     }
 
 
@@ -103,12 +225,9 @@ def analyze_emergency(text):
 
         "severity": severity,
 
-        "required_help":
-        support.get(
+        "required_help": support.get(
             emergency_type,
-            [
-                "General Emergency Support"
-            ]
+            ["General Emergency Support"]
         )
 
     }
