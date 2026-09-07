@@ -1,37 +1,6 @@
-from transformers import pipeline
+# modules/emergency.py
 
-
-# =========================================================
-# AI MODEL
-# =========================================================
-
-classifier = pipeline(
-    "zero-shot-classification",
-    model="facebook/bart-large-mnli",
-    device=-1
-)
-
-
-# =========================================================
-# CATEGORIES
-# =========================================================
-
-CATEGORIES = [
-    "Flood",
-    "Fire",
-    "Earthquake",
-    "Accident",
-    "Medical Emergency",
-    "Blood Assistance",
-    "Medicine Assistance",
-    "Food Assistance",
-    "Water Assistance",
-    "Shelter Needed",
-    "Rescue Needed",
-    "Volunteer Assistance",
-    "Missing Person",
-    "General Emergency"
-]
+import re
 
 
 # =========================================================
@@ -40,638 +9,417 @@ CATEGORIES = [
 
 KEYWORDS = {
 
-    "Food Assistance": [
-        "food",
-        "foods",
-        "hungry",
-        "hunger",
-        "meal",
-        "meals",
-        "rice",
-        "need food",
-        "i need food",
-        "food needed",
-        "no food",
-        "খাবার",
-        "খাবার লাগবে",
-        "খাবার দরকার",
-        "খাবার প্রয়োজন",
-        "খেতে পারছি না",
-        "ক্ষুধা",
-        "চাল দরকার"
-    ],
-
-    "Water Assistance": [
-        "water",
-        "drinking water",
-        "clean water",
-        "safe water",
-        "water needed",
-        "need water",
-        "no water",
-        "পানি",
-        "পানি লাগবে",
-        "পানি দরকার",
-        "পানি প্রয়োজন",
-        "জল",
-        "খাবার পানি",
-        "বিশুদ্ধ পানি"
-    ],
-
-    "Blood Assistance": [
-        "blood",
-        "blood donor",
-        "blood donation",
-        "need blood",
-        "blood needed",
-        "blood required",
-        "need a blood donor",
-        "looking for blood",
-        "rokto",
-        "roktto",
-        "rokto lagbe",
-        "rokto dorkar",
-        "rokto proyojon",
-        "rokto chai",
-        "রক্ত",
-        "রক্ত লাগবে",
-        "রক্ত দরকার",
-        "রক্ত প্রয়োজন",
-        "রক্ত চাই",
-        "রক্তদাতা",
-        "রক্ত দাতা"
-    ],
-
-    "Medicine Assistance": [
-        "medicine",
-        "medicines",
-        "medication",
-        "medicine needed",
-        "need medicine",
-        "need medicines",
-        "medicine required",
-        "tablet",
-        "tablets",
-        "drug",
-        "ওষুধ",
-        "ওষুধ লাগবে",
-        "ওষুধ দরকার",
-        "ওষুধ প্রয়োজন",
-        "ওষুধ চাই"
-    ],
-
-    "Shelter Needed": [
-        "shelter",
-        "place to stay",
-        "somewhere to stay",
-        "safe place to stay",
-        "place for shelter",
-        "homeless",
-        "no place to stay",
-        "stay tonight",
-        "need shelter",
-        "থাকার জায়গা",
-        "থাকার জায়গা দরকার",
-        "থাকার জায়গা লাগবে",
-        "আশ্রয়",
-        "আশ্রয় দরকার",
-        "আশ্রয় লাগবে",
-        "বাড়ি নেই"
-    ],
-
-    "Rescue Needed": [
-        "rescue",
-        "trapped",
-        "stuck",
-        "cannot get out",
-        "can't get out",
-        "unable to escape",
-        "need rescue",
-        "rescue needed",
-        "আটকে",
-        "আটকা",
-        "আটকে আছি",
-        "বের হতে পারছি না",
-        "বের হতে পারতেছি না",
-        "উদ্ধার",
-        "উদ্ধার দরকার",
-        "উদ্ধার লাগবে"
-    ],
-
-    "Volunteer Assistance": [
-       "volunteer",
-    "volunteers",
-    "need volunteer",
-    "need volunteers",
-    "need help",
-    "i need help",
-    "i need some help",
-    "need some help",
-    "someone help me",
-    "please help",
-    "help me",
-    "people to help",
-    "people needed to help",
-    "need people",
-    "someone to help",
-    "help needed",
-    "help required",
-
-    "help lagbe",
-    "help dorkar",
-    "help chai",
-    "sahajjo lagbe",
-    "sahajjo dorkar",
-    "sahajjo chai",
-    "amar help lagbe",
-    "amar sahajjo lagbe",
-    "amake help korun",
-    "amake sahajjo korun",
-
-    "স্বেচ্ছাসেবক",
-    "স্বেচ্ছাসেবক দরকার",
-    "মানুষ দরকার",
-    "সাহায্য করার মানুষ",
-    "সাহায্য দরকার",
-    "সাহায্য লাগবে",
-    "সাহায্য চাই",
-    "আমার সাহায্য লাগবে",
-    "আমার সাহায্য দরকার"
-    ],
-
-    "Medical Emergency": [
-        "injured",
-        "injury",
-        "sick",
-        "hospital",
-        "doctor",
-        "medical",
-        "ambulance",
-        "bleeding",
-        "unconscious",
-        "hurt",
-        "patient",
-        "pain",
-        "medical help",
-        "medical assistance",
-        "অসুস্থ",
-        "অসুস্থ হয়েছে",
-        "আহত",
-        "আহত হয়েছে",
-        "ডাক্তার",
-        "হাসপাতাল",
-        "অ্যাম্বুলেন্স",
-        "রক্তপাত",
-        "রোগী",
-        "ব্যথা",
-        "চিকিৎসা",
-        "চিকিৎসা দরকার",
-        "চিকিৎসা লাগবে"
-    ],
-
     "Flood": [
         "flood",
         "flooded",
-        "flooding",
+        "water everywhere",
+        "trapped in water",
         "water entered",
-        "water entered the house",
-        "water level",
-        "flood water",
-        "river overflow",
+        "bonna",
+        "bonnay",
+        "bonna hoise",
+        "pani uthse",
+        "pani dhukse",
+        "panite atke",
+        "পানি উঠেছে",
         "বন্যা",
-        "বন্যা হয়েছে",
-        "প্লাবিত",
-        "পানি ঢুকেছে",
-        "বাড়িতে পানি ঢুকেছে",
-        "পানি বাড়ছে",
-        "নদীর পানি বেড়েছে"
+        "বন্যায়",
+        "পানিতে আটকে"
     ],
 
     "Fire": [
         "fire",
+        "building fire",
+        "house fire",
         "burning",
-        "flames",
-        "building on fire",
-        "house on fire",
+        "agun",
+        "agun lagse",
+        "agun lagche",
+        "agun legeche",
         "আগুন",
         "আগুন লেগেছে",
-        "জ্বলছে",
-        "পুড়ছে",
-        "বাড়িতে আগুন"
+        "আগুন লাগছে"
     ],
 
     "Earthquake": [
         "earthquake",
-        "earthquake happened",
-        "earthquake occurred",
+        "earth quake",
+        "tremor",
+        "building shaking",
+        "bhumikompo",
         "ভূমিকম্প",
-        "ভূমিকম্প হয়েছে"
+        "ভূমিকম্প হচ্ছে"
     ],
 
     "Accident": [
         "accident",
+        "car accident",
+        "road accident",
         "crash",
         "collision",
-        "road accident",
-        "car accident",
-        "bike accident",
-        "motorcycle accident",
+        "durghotona",
         "দুর্ঘটনা",
-        "এক্সিডেন্ট",
-        "সড়ক দুর্ঘটনা"
+        "এক্সিডেন্ট"
+    ],
+
+    "Medical Emergency": [
+        "medical emergency",
+        "sick",
+        "ill",
+        "injured",
+        "injury",
+        "doctor",
+        "hospital",
+        "medicine",
+        "medication",
+        "treatment",
+        "fever",
+        "pain",
+        "bleeding",
+        "unconscious",
+        "osustho",
+        "osustho",
+        "oshustho",
+        "oshustho",
+        "daktar",
+        "doctor lagbe",
+        "medicine lagbe",
+        "osudh lagbe",
+        "oshudh lagbe",
+        "চিকিৎসা",
+        "অসুস্থ",
+        "অসুস্থ",
+        "ডাক্তার",
+        "ওষুধ",
+        "রক্তপাত"
+    ],
+
+    "Blood Assistance": [
+        "blood",
+        "blood needed",
+        "blood lagbe",
+        "blood dorkar",
+        "blood chai",
+        "need blood",
+        "blood donation",
+        "blood donor",
+        "rokto",
+        "rokto lagbe",
+        "rokto dorkar",
+        "rokto chai",
+        "rokto proyojon",
+        "roktto",
+        "রক্ত",
+        "রক্ত লাগবে",
+        "রক্ত দরকার",
+        "রক্ত চাই",
+        "রক্ত প্রয়োজন"
+    ],
+
+    "Food Assistance": [
+        "food",
+        "food needed",
+        "need food",
+        "food lagbe",
+        "food dorkar",
+        "food chai",
+        "khabar",
+        "khabar lagbe",
+        "khabar dorkar",
+        "khabar nai",
+        "khabar nei",
+        "khabar chai",
+        "খাবার",
+        "খাবার লাগবে",
+        "খাবার দরকার",
+        "খাবার নেই",
+        "খাবার চাই"
+    ],
+
+    "Water Assistance": [
+        "water needed",
+        "need water",
+        "water lagbe",
+        "water dorkar",
+        "water chai",
+        "pani lagbe",
+        "pani dorkar",
+        "pani chai",
+        "pani nei",
+        "পানি লাগবে",
+        "পানি দরকার",
+        "পানি চাই",
+        "পানি নেই"
+    ],
+
+    "Shelter Needed": [
+        "shelter",
+        "shelter needed",
+        "need shelter",
+        "place to stay",
+        "place to live",
+        "homeless",
+        "no place to stay",
+        "thakar jayga",
+        "thakar jayga lagbe",
+        "thakar jayga nai",
+        "thakar jayga nei",
+        "ashroy",
+        "আশ্রয়",
+        "থাকার জায়গা",
+        "থাকার জায়গা লাগবে",
+        "থাকার জায়গা নেই"
+    ],
+
+    "Volunteer Assistance": [
+        "volunteer",
+        "volunteers",
+        "volunteer help",
+        "need volunteer",
+        "help me",
+        "help needed",
+        "need help",
+        "i need help",
+        "amar help lagbe",
+        "amar help dorkar",
+        "help lagbe",
+        "help dorkar",
+        "help chai",
+        "amake help korun",
+        "help koren",
+        "help koro",
+        "sahajjo",
+        "sahajjo chai",
+        "sahajjo lagbe",
+        "sahajjo dorkar",
+        "সাহায্য",
+        "সাহায্য চাই",
+        "সাহায্য লাগবে",
+        "সাহায্য দরকার"
+    ],
+
+    "Rescue Assistance": [
+        "rescue",
+        "rescue needed",
+        "need rescue",
+        "save me",
+        "trapped",
+        "stuck",
+        "atke gechi",
+        "atke achi",
+        "uddhar",
+        "উদ্ধার",
+        "উদ্ধার দরকার",
+        "আটকে গেছি",
+        "আটকে আছি"
     ],
 
     "Missing Person": [
         "missing person",
-        "missing",
+        "person missing",
         "lost person",
-        "can't find",
-        "cannot find",
-        "lost child",
-        "missing child",
-        "নিখোঁজ",
+        "someone is missing",
+        "nikhoj",
         "হারিয়ে গেছে",
-        "খুঁজে পাচ্ছি না",
-        "শিশু নিখোঁজ"
+        "নিখোঁজ"
     ]
 }
 
 
 # =========================================================
-# SUPPORT MAPPING
-# =========================================================
-
-SUPPORT = {
-
-    "Flood": [
-        "Rescue Team",
-        "Food Supply",
-        "Temporary Shelter",
-        "Clean Water"
-    ],
-
-    "Fire": [
-        "Fire Service",
-        "Rescue Team",
-        "Emergency Transport"
-    ],
-
-    "Earthquake": [
-        "Rescue Team",
-        "Temporary Shelter",
-        "Medical Support",
-        "Food Supply"
-    ],
-
-    "Accident": [
-        "Emergency Transport",
-        "Medical Support",
-        "Blood Assistance"
-    ],
-
-    "Medical Emergency": [
-        "Medical Support",
-        "Ambulance",
-        "Doctor Assistance"
-    ],
-
-    "Blood Assistance": [
-        "Blood Donor",
-        "Medical Support",
-        "Hospital Assistance"
-    ],
-
-    "Medicine Assistance": [
-        "Medicine Support",
-        "Medical Support",
-        "Pharmacy Assistance"
-    ],
-
-    "Food Assistance": [
-        "Food Supply",
-        "Food Distribution Team",
-        "Volunteer Assistance"
-    ],
-
-    "Water Assistance": [
-        "Clean Water",
-        "Water Distribution Team",
-        "Volunteer Assistance"
-    ],
-
-    "Shelter Needed": [
-        "Temporary Shelter",
-        "Food Supply",
-        "Clean Water"
-    ],
-
-    "Rescue Needed": [
-        "Rescue Team",
-        "Emergency Transport",
-        "Medical Support"
-    ],
-
-    "Volunteer Assistance": [
-        "Volunteers",
-        "Food Distribution Team",
-        "Rescue Support"
-    ],
-
-    "Missing Person": [
-        "Search & Rescue Team",
-        "Police Assistance",
-        "Volunteer Assistance"
-    ],
-
-    "General Emergency": [
-        "Emergency Support",
-        "Volunteer Assistance"
-    ]
-}
-
-
-# =========================================================
-# SEVERITY KEYWORDS
+# CRITICAL / HIGH PRIORITY WORDS
 # =========================================================
 
 CRITICAL_WORDS = [
     "dying",
-    "critical",
+    "dead",
     "unconscious",
     "severe bleeding",
     "heavy bleeding",
-    "bleeding badly",
-    "trapped",
     "can't breathe",
     "cannot breathe",
-    "life threatening",
-    "life-threatening",
-    "urgent",
-    "urgently",
-    "child trapped",
-    "baby trapped",
-
+    "not breathing",
+    "heart attack",
+    "trapped",
+    "fire",
+    "explosion",
+    "critical",
     "মারা যাচ্ছে",
-    "মুমূর্ষু",
     "অজ্ঞান",
-    "অনেক রক্তপাত",
-    "প্রচুর রক্তপাত",
-    "আটকে আছি",
-    "আটকে আছে",
-    "জরুরি",
-    "জরুরি সাহায্য"
+    "অনেক রক্ত",
+    "শ্বাস নিতে পারছে না",
+    "শ্বাসকষ্ট",
+    "হার্ট অ্যাটাক"
 ]
-
 
 HIGH_WORDS = [
     "injured",
-    "injury",
-    "sick",
-    "flood",
-    "flooded",
-    "fire",
+    "bleeding",
     "accident",
-    "medicine",
-    "blood",
-    "homeless",
-    "no food",
-    "hungry",
-    "no water",
+    "earthquake",
+    "flood",
     "rescue",
-    "trapped",
-
-    "আহত",
-    "অসুস্থ",
-    "বন্যা",
-    "আগুন",
+    "emergency",
+    "জরুরি",
     "দুর্ঘটনা",
-    "ওষুধ",
-    "রক্ত",
-    "ক্ষুধা",
-    "পানি নেই",
-    "উদ্ধার",
-    "আটকে"
+    "আহত",
+    "রক্তপাত"
 ]
 
 
 # =========================================================
-# KEYWORD CHECK
+# TEXT NORMALIZATION
 # =========================================================
 
-def contains_keyword(text, keywords):
+def normalize_text(text):
+    if not text:
+        return ""
 
-    text_lower = text.lower().strip()
+    text = str(text).lower().strip()
 
-    for keyword in keywords:
+    text = re.sub(r"\s+", " ", text)
 
-        if keyword.lower() in text_lower:
-            return True
-
-    return False
+    return text
 
 
 # =========================================================
-# DIRECT KEYWORD DETECTION
+# KEYWORD MATCH
 # =========================================================
 
-def detect_keyword_needs(text):
+def contains_keyword(text, keyword):
+
+    text = normalize_text(text)
+    keyword = normalize_text(keyword)
+
+    return keyword in text
+
+
+# =========================================================
+# DETECT NEEDS
+# =========================================================
+
+def detect_needs(text):
+
+    text = normalize_text(text)
 
     detected = []
 
     for category, keywords in KEYWORDS.items():
 
-        if contains_keyword(text, keywords):
+        for keyword in keywords:
 
-            detected.append(category)
+            if contains_keyword(text, keyword):
 
-    return detected
+                if category not in detected:
+                    detected.append(category)
 
-
-# =========================================================
-# AI DETECTION
-# =========================================================
-
-def detect_ai_need(text):
-
-    try:
-
-        ai_result = classifier(
-            text,
-            CATEGORIES,
-            hypothesis_template="This person's situation is about {}."
-        )
-
-        top_label = ai_result["labels"][0]
-        top_score = ai_result["scores"][0]
-
-        if top_score >= 0.50:
-
-            return top_label, top_score
-
-    except Exception:
-
-        pass
-
-    return None, 0
-
-
-# =========================================================
-# DETECT ALL NEEDS
-# =========================================================
-
-def detect_needs(text):
-
-    detected = []
+                break
 
     # -----------------------------------------------------
-    # 1. Direct keyword detection
-    # -----------------------------------------------------
-
-    keyword_needs = detect_keyword_needs(text)
-
-    for need in keyword_needs:
-
-        if need not in detected:
-
-            detected.append(need)
-
-
-    # -----------------------------------------------------
-    # 2. AI detection
-    #
-    # AI is used only when keyword detection does not
-    # clearly identify the situation.
-    # -----------------------------------------------------
-
-    ai_label, ai_score = detect_ai_need(text)
-
-    if ai_label:
-
-        # Do not allow AI to replace clear keyword matches
-        if not detected:
-
-            detected.append(ai_label)
-
-
-    # -----------------------------------------------------
-    # 3. Blood automatically means medical support
+    # Blood automatically means medical support
     # -----------------------------------------------------
 
     if "Blood Assistance" in detected:
 
         if "Medical Emergency" not in detected:
-
             detected.append("Medical Emergency")
 
-
     # -----------------------------------------------------
-    # 4. Medicine automatically means medical support
+    # Medicine automatically means medical
     # -----------------------------------------------------
 
-    if "Medicine Assistance" in detected:
+    if any(
+        word in text
+        for word in [
+            "medicine",
+            "medication",
+            "medicine lagbe",
+            "osudh",
+            "oshudh",
+            "ওষুধ"
+        ]
+    ):
 
         if "Medical Emergency" not in detected:
-
             detected.append("Medical Emergency")
 
-
     # -----------------------------------------------------
-    # 5. Flood + trapped means rescue
-    # -----------------------------------------------------
-
-    if "Flood" in detected:
-
-        rescue_words = [
-            "trapped",
-            "stuck",
-            "cannot get out",
-            "can't get out",
-            "unable to escape",
-            "আটকে",
-            "আটকা",
-            "বের হতে পারছি না",
-            "উদ্ধার"
-        ]
-
-        if contains_keyword(text, rescue_words):
-
-            if "Rescue Needed" not in detected:
-
-                detected.append("Rescue Needed")
-
-
-    # -----------------------------------------------------
-    # Remove duplicates
+    # Help request
     # -----------------------------------------------------
 
-    unique_needs = []
+    help_words = [
+        "help",
+        "help me",
+        "need help",
+        "amar help lagbe",
+        "amar help dorkar",
+        "help lagbe",
+        "help dorkar",
+        "help chai",
+        "sahajjo",
+        "সাহায্য"
+    ]
 
-    for need in detected:
+    if any(word in text for word in help_words):
 
-        if need not in unique_needs:
-
-            unique_needs.append(need)
-
+        if "Volunteer Assistance" not in detected:
+            detected.append("Volunteer Assistance")
 
     # -----------------------------------------------------
-    # Fallback
+    # Rescue situation
     # -----------------------------------------------------
 
-    if not unique_needs:
+    rescue_words = [
+        "trapped",
+        "stuck",
+        "atke",
+        "আটকে",
+        "rescue",
+        "উদ্ধার"
+    ]
 
-        unique_needs = ["General Emergency"]
+    if any(word in text for word in rescue_words):
 
+        if "Rescue Assistance" not in detected:
+            detected.append("Rescue Assistance")
 
-    return unique_needs
+    # -----------------------------------------------------
+    # No specific need
+    # -----------------------------------------------------
+
+    if not detected:
+
+        detected.append("General Emergency")
+
+    return detected
 
 
 # =========================================================
 # PRIMARY CRISIS
 # =========================================================
 
-def detect_primary_crisis(text, needs):
+def determine_primary_crisis(needs):
 
-    # -----------------------------------------------------
-    # Physical crisis gets highest priority
-    # -----------------------------------------------------
+    priority_order = [
 
-    crisis_categories = [
         "Fire",
         "Earthquake",
         "Flood",
         "Accident",
-        "Missing Person"
-    ]
-
-    for crisis in crisis_categories:
-
-        if crisis in needs:
-
-            return crisis
-
-
-    # -----------------------------------------------------
-    # Medical emergencies
-    # -----------------------------------------------------
-
-    priority_order = [
         "Medical Emergency",
+        "Rescue Assistance",
         "Blood Assistance",
-        "Rescue Needed",
-        "Medicine Assistance",
+        "Shelter Needed",
         "Food Assistance",
         "Water Assistance",
-        "Shelter Needed",
         "Volunteer Assistance",
-        "General Emergency"
+        "Missing Person"
     ]
 
     for item in priority_order:
 
         if item in needs:
-
             return item
-
 
     return "General Emergency"
 
@@ -680,63 +428,112 @@ def detect_primary_crisis(text, needs):
 # SEVERITY
 # =========================================================
 
-def detect_severity(text, needs):
+def determine_severity(text, needs):
 
-    text_lower = text.lower()
+    text = normalize_text(text)
 
-
-    # -----------------------------------------------------
     # Critical
-    # -----------------------------------------------------
-
     for word in CRITICAL_WORDS:
 
-        if word.lower() in text_lower:
-
+        if word in text:
             return "Critical"
 
-
-    # -----------------------------------------------------
     # High
-    # -----------------------------------------------------
-
     for word in HIGH_WORDS:
 
-        if word.lower() in text_lower:
-
+        if word in text:
             return "High"
 
-
-    # -----------------------------------------------------
-    # Serious categories
-    # -----------------------------------------------------
-
-    serious_needs = [
-        "Medical Emergency",
-        "Blood Assistance",
-        "Rescue Needed",
-        "Fire",
-        "Accident",
-        "Earthquake"
-    ]
-
-    for need in serious_needs:
-
-        if need in needs:
-
-            return "High"
-
-
-    # -----------------------------------------------------
     # Multiple needs
-    # -----------------------------------------------------
-
     if len(needs) >= 3:
-
         return "High"
 
+    # Medical / rescue / blood
+    if any(
+        item in needs
+        for item in [
+            "Medical Emergency",
+            "Blood Assistance",
+            "Rescue Assistance"
+        ]
+    ):
+        return "High"
 
     return "Medium"
+
+
+# =========================================================
+# EXPLANATION
+# =========================================================
+
+def generate_explanation(primary_crisis, needs):
+
+    if primary_crisis == "Food Assistance":
+
+        return (
+            "The request appears to be mainly related to food assistance. "
+            "HopeLink identified the need for food support."
+        )
+
+    if primary_crisis == "Blood Assistance":
+
+        return (
+            "The request indicates a need for blood or blood-donation support. "
+            "Medical assistance may also be required."
+        )
+
+    if primary_crisis == "Medical Emergency":
+
+        return (
+            "The message indicates a possible medical or health-related need. "
+            "Medical support may be required."
+        )
+
+    if primary_crisis == "Shelter Needed":
+
+        return (
+            "The request indicates that safe accommodation or shelter "
+            "may be needed."
+        )
+
+    if primary_crisis == "Flood":
+
+        return (
+            "The message indicates a flood or water-related emergency. "
+            "Rescue, shelter, food or water support may be required."
+        )
+
+    if primary_crisis == "Fire":
+
+        return (
+            "The message indicates a possible fire emergency. "
+            "Immediate safety and emergency response may be required."
+        )
+
+    if primary_crisis == "Earthquake":
+
+        return (
+            "The message indicates a possible earthquake-related emergency. "
+            "Safety assessment and emergency assistance may be required."
+        )
+
+    if primary_crisis == "Accident":
+
+        return (
+            "The message indicates a possible accident. "
+            "Medical and emergency support may be required."
+        )
+
+    if primary_crisis == "Volunteer Assistance":
+
+        return (
+            "The person appears to be requesting general help or volunteer support."
+        )
+
+    return (
+        "The message indicates a general request for emergency assistance. "
+        "More specific information may be needed."
+    )
 
 
 # =========================================================
@@ -747,112 +544,32 @@ def get_required_support(needs):
 
     support = []
 
-    for need in needs:
-
-        for item in SUPPORT.get(need, []):
-
-            if item not in support:
-
-                support.append(item)
-
-    return support
-
-
-# =========================================================
-# EXPLANATION
-# =========================================================
-
-def generate_explanation(text, needs, severity):
-
-    explanation_map = {
-
-        "Flood":
-            "a flood-related crisis",
-
-        "Fire":
-            "a fire-related emergency",
-
-        "Earthquake":
-            "an earthquake-related emergency",
-
-        "Accident":
-            "an accident",
-
-        "Medical Emergency":
-            "a medical situation",
-
-        "Blood Assistance":
-            "a blood requirement",
-
-        "Medicine Assistance":
-            "a medicine requirement",
-
-        "Food Assistance":
-            "a food requirement",
-
-        "Water Assistance":
-            "a clean water requirement",
-
-        "Shelter Needed":
-            "a need for temporary shelter",
-
-        "Rescue Needed":
-            "a rescue requirement",
-
-        "Volunteer Assistance":
-            "a need for volunteer support",
-
-        "Missing Person":
-            "a missing-person situation",
-
-        "General Emergency":
-            "an emergency situation"
+    mapping = {
+        "Food Assistance": "Food Support",
+        "Water Assistance": "Water Support",
+        "Blood Assistance": "Blood Donor / Blood Support",
+        "Medical Emergency": "Medical Assistance",
+        "Shelter Needed": "Shelter Support",
+        "Volunteer Assistance": "Volunteer Assistance",
+        "Rescue Assistance": "Emergency Rescue",
+        "Flood": "Flood Response",
+        "Fire": "Fire Emergency Response",
+        "Earthquake": "Earthquake Response",
+        "Accident": "Emergency Medical Support",
+        "Missing Person": "Search & Support"
     }
 
-
-    descriptions = []
-
     for need in needs:
 
-        if need in explanation_map:
+        if need in mapping and mapping[need] not in support:
 
-            descriptions.append(
-                explanation_map[need]
-            )
+            support.append(mapping[need])
 
+    if not support:
 
-    if not descriptions:
+        support.append("Emergency Support")
 
-        reason = "an emergency situation"
-
-    elif len(descriptions) == 1:
-
-        reason = descriptions[0]
-
-    elif len(descriptions) == 2:
-
-        reason = (
-            descriptions[0]
-            + " and "
-            + descriptions[1]
-        )
-
-    else:
-
-        reason = (
-            ", ".join(descriptions[:-1])
-            + ", and "
-            + descriptions[-1]
-        )
-
-
-    return (
-        "HopeLink detected "
-        + reason
-        + ". Based on the described situation, "
-        + severity.lower()
-        + " priority support was recommended."
-    )
+    return support
 
 
 # =========================================================
@@ -861,125 +578,267 @@ def generate_explanation(text, needs, severity):
 
 def analyze_emergency(text):
 
-    text = text.strip()
-
-
-    # -----------------------------------------------------
-    # Empty input
-    # -----------------------------------------------------
+    text = normalize_text(text)
 
     if not text:
 
         return {
-            "type": "General Emergency",
-            "needs": ["General Emergency"],
-            "confidence": 0,
-            "match_strength": "Moderate",
+            "primary_crisis": "General Emergency",
+            "detected_needs": ["General Emergency"],
             "severity": "Medium",
-            "required_help": ["Emergency Support"],
-            "explanation": "Please describe your emergency."
+            "assessment": "No message provided",
+            "explanation": "Please describe what kind of help is needed.",
+            "required_support": ["Emergency Support"]
         }
-
-
-    # -----------------------------------------------------
-    # Detect needs
-    # -----------------------------------------------------
 
     needs = detect_needs(text)
 
+    primary = determine_primary_crisis(needs)
 
-    # -----------------------------------------------------
-    # Detect primary crisis
-    # -----------------------------------------------------
-
-    primary_crisis = detect_primary_crisis(
-        text,
-        needs
-    )
-
-
-    # -----------------------------------------------------
-    # Detect severity
-    # -----------------------------------------------------
-
-    severity = detect_severity(
-        text,
-        needs
-    )
-
-
-    # -----------------------------------------------------
-    # Required support
-    # -----------------------------------------------------
-
-    required_help = get_required_support(
-        needs
-    )
-
-
-    # -----------------------------------------------------
-    # AI match strength
-    #
-    # This is NOT shown as raw probability.
-    # -----------------------------------------------------
-
-    try:
-
-        ai_result = classifier(
-            text,
-            CATEGORIES,
-            hypothesis_template="This person's situation is about {}."
-        )
-
-        score = ai_result["scores"][0]
-
-
-        if score >= 0.70:
-
-            match_strength = "Strong"
-
-        elif score >= 0.45:
-
-            match_strength = "Good"
-
-        else:
-
-            match_strength = "Moderate"
-
-    except Exception:
-
-        match_strength = "Good"
-
-
-    # -----------------------------------------------------
-    # Explanation
-    # -----------------------------------------------------
+    severity = determine_severity(text, needs)
 
     explanation = generate_explanation(
-        text,
-        needs,
-        severity
+        primary,
+        needs
+    )
+
+    support = get_required_support(needs)
+
+    return {
+        "primary_crisis": primary,
+        "detected_needs": needs,
+        "severity": severity,
+        "assessment": "Needs identified from your message",
+        "explanation": explanation,
+        "required_support": support
+    }
+
+
+# =========================================================
+# AI RESPONSE
+# =========================================================
+
+def generate_response(analysis):
+
+    if isinstance(analysis, dict):
+
+        primary = analysis.get(
+            "primary_crisis",
+            "General Emergency"
+        )
+
+        needs = analysis.get(
+            "detected_needs",
+            []
+        )
+
+        severity = analysis.get(
+            "severity",
+            "Medium"
+        )
+
+    else:
+
+        primary = "General Emergency"
+        needs = []
+        severity = "Medium"
+
+    # -----------------------------------------------------
+    # Food
+    # -----------------------------------------------------
+
+    if "Food Assistance" in needs:
+
+        message = (
+            "HopeLink identified a food assistance need. "
+            "Please stay in a safe location while food support is arranged."
+        )
+
+    # -----------------------------------------------------
+    # Blood
+    # -----------------------------------------------------
+
+    elif "Blood Assistance" in needs:
+
+        message = (
+            "HopeLink identified a blood assistance need. "
+            "Please contact a hospital or verified blood-donation service "
+            "as soon as possible."
+        )
+
+    # -----------------------------------------------------
+    # Medical
+    # -----------------------------------------------------
+
+    elif "Medical Emergency" in needs:
+
+        message = (
+            "HopeLink identified a possible medical emergency. "
+            "Please seek professional medical assistance immediately "
+            "if the situation is serious."
+        )
+
+    # -----------------------------------------------------
+    # Fire
+    # -----------------------------------------------------
+
+    elif primary == "Fire":
+
+        message = (
+            "Please move to a safe location away from the fire "
+            "and contact local emergency services."
+        )
+
+    # -----------------------------------------------------
+    # Flood
+    # -----------------------------------------------------
+
+    elif primary == "Flood":
+
+        message = (
+            "Please move to higher and safer ground if possible. "
+            "Avoid moving through fast-flowing water."
+        )
+
+    # -----------------------------------------------------
+    # Shelter
+    # -----------------------------------------------------
+
+    elif "Shelter Needed" in needs:
+
+        message = (
+            "HopeLink identified a shelter need. "
+            "Please move to a safe temporary shelter if available."
+        )
+
+    # -----------------------------------------------------
+    # Volunteer
+    # -----------------------------------------------------
+
+    elif "Volunteer Assistance" in needs:
+
+        message = (
+            "HopeLink identified a request for help. "
+            "Volunteer or community assistance may be needed."
+        )
+
+    # -----------------------------------------------------
+    # Rescue
+    # -----------------------------------------------------
+
+    elif "Rescue Assistance" in needs:
+
+        message = (
+            "A rescue situation may be involved. "
+            "Stay as safe as possible and contact emergency responders."
+        )
+
+    else:
+
+        message = (
+            "Please stay safe. Emergency support may be required. "
+            "Provide more details if possible."
+        )
+
+    return (
+        f"{message}\n\n"
+        f"Priority Level: {severity}"
     )
 
 
-    # -----------------------------------------------------
-    # Final result
-    # -----------------------------------------------------
+# =========================================================
+# SAFETY TIPS
+# =========================================================
+
+def get_emergency_tips(primary_crisis):
+
+    tips = {
+
+        "Flood": [
+            "Move to higher ground if possible.",
+            "Avoid fast-moving water.",
+            "Keep drinking water and essential medicines with you.",
+            "Follow official emergency instructions."
+        ],
+
+        "Fire": [
+            "Move away from the fire immediately.",
+            "Do not use elevators during a building fire.",
+            "Stay low if there is heavy smoke.",
+            "Contact local emergency services."
+        ],
+
+        "Earthquake": [
+            "Drop, cover and hold on.",
+            "Stay away from windows.",
+            "Do not use elevators.",
+            "Move outside only when it is safe."
+        ],
+
+        "Medical Emergency": [
+            "Seek professional medical assistance.",
+            "Do not take unknown medication.",
+            "Keep the patient in a safe position.",
+            "Contact emergency medical services if necessary."
+        ],
+
+        "Accident": [
+            "Move to a safe location if possible.",
+            "Avoid unnecessary movement of seriously injured people.",
+            "Call emergency medical assistance.",
+            "Provide basic first aid only if you know how."
+        ],
+
+        "Shelter Needed": [
+            "Move to a safe location.",
+            "Stay with trusted people if possible.",
+            "Keep important documents and medicines with you."
+        ],
+
+        "Food Assistance": [
+            "Stay in a safe location.",
+            "Use safe drinking water.",
+            "Contact trusted community or humanitarian support."
+        ],
+
+        "Blood Assistance": [
+            "Contact a hospital or verified blood bank.",
+            "Provide the required blood group if known.",
+            "Do not delay professional medical care."
+        ],
+
+        "Volunteer Assistance": [
+            "Clearly describe what type of help is needed.",
+            "Stay in a safe and accessible location.",
+            "Avoid sharing unnecessary personal information."
+        ]
+    }
+
+    return tips.get(
+        primary_crisis,
+        [
+            "Stay calm and move to a safe location.",
+            "Contact local emergency services if necessary.",
+            "Follow official safety instructions."
+        ]
+    )
+
+
+# =========================================================
+# VOLUNTEER MATCH
+# =========================================================
+
+def match_volunteer(
+    name,
+    location,
+    help_types,
+    availability
+):
 
     return {
-
-        "type": primary_crisis,
-
-        "needs": needs,
-
-        # Kept for compatibility with old app.py
-        "confidence": 0,
-
-        "match_strength": match_strength,
-
-        "severity": severity,
-
-        "required_help": required_help,
-
-        "explanation": explanation
+        "name": name,
+        "location": location,
+        "help_types": help_types,
+        "availability": availability,
+        "status": "Registered"
     }
