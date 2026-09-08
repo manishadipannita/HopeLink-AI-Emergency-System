@@ -2,11 +2,25 @@ import streamlit as st
 from PIL import Image
 
 from modules.emergency import analyze_emergency
+
 from modules.volunteer import match_volunteer
-from modules.report import generate_report, create_pdf
-from modules.resources import recommend_resources
-from modules.response import generate_response
-from modules.emergency_tips import get_emergency_tips
+
+from modules.report import (
+    generate_report,
+    create_pdf
+)
+
+from modules.resources import (
+    recommend_resources
+)
+
+from modules.response import (
+    generate_response
+)
+
+from modules.emergency_tips import (
+    get_emergency_tips
+)
 
 
 # =========================================================
@@ -26,7 +40,9 @@ st.set_page_config(
 
 try:
 
-    logo = Image.open("HopeLink_logo.png")
+    logo = Image.open(
+        "HopeLink_logo.png"
+    )
 
     st.sidebar.image(
         logo,
@@ -37,7 +53,9 @@ except Exception:
 
     try:
 
-        logo = Image.open("hopelink_logo.png")
+        logo = Image.open(
+            "hopelink_logo.png"
+        )
 
         st.sidebar.image(
             logo,
@@ -55,7 +73,9 @@ except Exception:
 # SIDEBAR
 # =========================================================
 
-st.sidebar.title("HopeLink AI")
+st.sidebar.title(
+    "HopeLink AI"
+)
 
 st.sidebar.write(
     "AI-powered humanitarian support "
@@ -81,7 +101,9 @@ st.sidebar.caption(
 # MAIN HEADER
 # =========================================================
 
-st.title("💙 HopeLink AI")
+st.title(
+    "💙 HopeLink AI"
+)
 
 st.subheader(
     "AI-powered crisis analysis and emergency support platform"
@@ -116,7 +138,9 @@ if role == "🆘 I Need Help":
 
     st.markdown("---")
 
-    st.header("🚨 Describe Your Emergency")
+    st.header(
+        "🚨 Describe Your Emergency"
+    )
 
     st.write(
         "Tell HopeLink what you need. "
@@ -125,21 +149,27 @@ if role == "🆘 I Need Help":
 
 
     # =====================================================
-    # EMERGENCY INPUT
+    # INPUT
     # =====================================================
 
     emergency_text = st.text_area(
         "Explain your situation:",
+
         placeholder=(
-            "Example: My father is injured after the flood "
-            "and we need medicine and a place to stay."
+            "Example:\n"
+            "I am injured and need medical help.\n\n"
+            "or\n"
+            "Amar rokto lagbe.\n\n"
+            "or\n"
+            "I need food for my family after the flood."
         ),
+
         height=150
     )
 
 
     # =====================================================
-    # ANALYZE BUTTON
+    # ANALYZE
     # =====================================================
 
     if st.button(
@@ -164,7 +194,11 @@ if role == "🆘 I Need Help":
                     emergency_text
                 )
 
-            st.session_state["result"] = result
+
+            st.session_state[
+                "result"
+            ] = result
+
 
             st.session_state[
                 "emergency_text"
@@ -177,11 +211,13 @@ if role == "🆘 I Need Help":
 
     if "result" in st.session_state:
 
-        result = st.session_state["result"]
+        result = st.session_state[
+            "result"
+        ]
 
 
         # =================================================
-        # SUCCESS MESSAGE
+        # SUCCESS
         # =================================================
 
         st.success(
@@ -195,7 +231,9 @@ if role == "🆘 I Need Help":
 
         st.markdown("---")
 
-        st.header("🧠 AI Understanding")
+        st.header(
+            "🧠 AI Understanding"
+        )
 
         st.write(
             "HopeLink identified the following crisis "
@@ -207,8 +245,17 @@ if role == "🆘 I Need Help":
         # PRIMARY CRISIS
         # =================================================
 
+        primary_crisis = result.get(
+            "primary_crisis",
+            result.get(
+                "type",
+                "General Emergency"
+            )
+        )
+
+
         st.markdown(
-            f"### 🚨 Primary Crisis: **{result.get('type', 'General Emergency')}**"
+            f"### 🚨 Primary Crisis: **{primary_crisis}**"
         )
 
 
@@ -220,10 +267,24 @@ if role == "🆘 I Need Help":
             "### 🤝 Detected Needs"
         )
 
+
         needs = result.get(
-            "needs",
-            [result.get("type", "General Emergency")]
+            "detected_needs",
+            result.get(
+                "needs",
+                [primary_crisis]
+            )
         )
+
+
+        if isinstance(
+            needs,
+            str
+        ):
+
+            needs = [
+                needs
+            ]
 
 
         for need in needs:
@@ -310,7 +371,7 @@ if role == "🆘 I Need Help":
 
 
         # =================================================
-        # WHY HOPELINK RECOMMENDED THIS
+        # EXPLANATION
         # =================================================
 
         st.markdown("---")
@@ -341,9 +402,22 @@ if role == "🆘 I Need Help":
 
 
         required_help = result.get(
-            "required_help",
-            []
+            "required_support",
+            result.get(
+                "required_help",
+                []
+            )
         )
+
+
+        if isinstance(
+            required_help,
+            str
+        ):
+
+            required_help = [
+                required_help
+            ]
 
 
         if required_help:
@@ -362,7 +436,7 @@ if role == "🆘 I Need Help":
 
 
         # =================================================
-        # RECOMMENDED RESOURCES
+        # RESOURCES
         # =================================================
 
         st.markdown("---")
@@ -374,19 +448,16 @@ if role == "🆘 I Need Help":
 
         try:
 
+            # Try the existing module's expected format
             resource = recommend_resources(
-                result.get(
-                    "type",
-                    "General Emergency"
-                )
+                primary_crisis
             )
 
 
-            # ---------------------------------------------
-            # Handle dictionary response
-            # ---------------------------------------------
-
-            if isinstance(resource, dict):
+            if isinstance(
+                resource,
+                dict
+            ):
 
                 centers = resource.get(
                     "centers",
@@ -396,6 +467,7 @@ if role == "🆘 I Need Help":
                     )
                 )
 
+
                 help_list = resource.get(
                     "help",
                     resource.get(
@@ -403,6 +475,17 @@ if role == "🆘 I Need Help":
                         []
                     )
                 )
+
+
+            elif isinstance(
+                resource,
+                list
+            ):
+
+                centers = resource
+
+                help_list = []
+
 
             else:
 
@@ -412,7 +495,7 @@ if role == "🆘 I Need Help":
 
 
             # ---------------------------------------------
-            # Emergency Centers
+            # Centers
             # ---------------------------------------------
 
             if centers:
@@ -430,7 +513,7 @@ if role == "🆘 I Need Help":
 
 
             # ---------------------------------------------
-            # Available Help
+            # Help
             # ---------------------------------------------
 
             if help_list:
@@ -448,7 +531,7 @@ if role == "🆘 I Need Help":
 
 
             # ---------------------------------------------
-            # No resources
+            # Nothing
             # ---------------------------------------------
 
             if not centers and not help_list:
@@ -480,23 +563,17 @@ if role == "🆘 I Need Help":
 
         try:
 
+            # Existing response.py format
             response = generate_response(
-                result.get(
-                    "type",
-                    "General Emergency"
-                ),
-                result.get(
-                    "severity",
-                    "Medium"
-                )
+                primary_crisis,
+                severity
             )
 
 
-            # ---------------------------------------------
-            # If response is a dictionary
-            # ---------------------------------------------
-
-            if isinstance(response, dict):
+            if isinstance(
+                response,
+                dict
+            ):
 
                 message = response.get(
                     "message",
@@ -504,12 +581,10 @@ if role == "🆘 I Need Help":
                     "appropriate emergency support."
                 )
 
+
                 priority = response.get(
                     "priority",
-                    result.get(
-                        "severity",
-                        "Medium"
-                    )
+                    severity
                 )
 
 
@@ -523,10 +598,6 @@ if role == "🆘 I Need Help":
                 )
 
 
-            # ---------------------------------------------
-            # If response is normal text
-            # ---------------------------------------------
-
             else:
 
                 st.success(
@@ -535,17 +606,73 @@ if role == "🆘 I Need Help":
 
 
                 st.caption(
-                    f"Priority Level: "
-                    f"{result.get('severity', 'Medium')}"
+                    f"Priority Level: {severity}"
                 )
 
 
         except Exception:
 
+            # Fallback response
+            if primary_crisis == "Medical Emergency":
+
+                fallback = (
+                    "The situation may require medical "
+                    "attention. Please seek professional "
+                    "medical assistance as soon as possible."
+                )
+
+            elif primary_crisis == "Blood Assistance":
+
+                fallback = (
+                    "Blood support may be required. "
+                    "Please contact a hospital or verified "
+                    "blood-donation service."
+                )
+
+            elif primary_crisis == "Food Assistance":
+
+                fallback = (
+                    "Food assistance may be required. "
+                    "Please contact trusted humanitarian "
+                    "or community support."
+                )
+
+            elif primary_crisis == "Shelter Needed":
+
+                fallback = (
+                    "Please move to a safe location or "
+                    "temporary shelter if available."
+                )
+
+            elif primary_crisis == "Flood":
+
+                fallback = (
+                    "Move to higher and safer ground if "
+                    "possible and avoid fast-moving water."
+                )
+
+            elif primary_crisis == "Fire":
+
+                fallback = (
+                    "Move away from the fire and contact "
+                    "local emergency services."
+                )
+
+            else:
+
+                fallback = (
+                    "Please stay safe and seek appropriate "
+                    "emergency support."
+                )
+
+
             st.success(
-                "We understand your situation. "
-                "Please move to a safe place and "
-                "seek appropriate emergency support."
+                fallback
+            )
+
+
+            st.caption(
+                f"Priority Level: {severity}"
             )
 
 
@@ -563,10 +690,7 @@ if role == "🆘 I Need Help":
         try:
 
             tips = get_emergency_tips(
-                result.get(
-                    "type",
-                    "General Emergency"
-                )
+                primary_crisis
             )
 
 
@@ -595,7 +719,7 @@ if role == "🆘 I Need Help":
 
 
         # =================================================
-        # REPORT GENERATOR
+        # REPORT
         # =================================================
 
         st.markdown("---")
@@ -634,9 +758,15 @@ if role == "🆘 I Need Help":
 
                 st.download_button(
                     label="⬇️ Download Emergency Report",
+
                     data=pdf_file,
-                    file_name="HopeLink_Emergency_Report.pdf",
+
+                    file_name=(
+                        "HopeLink_Emergency_Report.pdf"
+                    ),
+
                     mime="application/pdf",
+
                     use_container_width=True
                 )
 
@@ -667,7 +797,7 @@ else:
 
 
     # =====================================================
-    # VOLUNTEER NAME
+    # NAME
     # =====================================================
 
     volunteer_name = st.text_input(
@@ -695,6 +825,7 @@ else:
 
     help_options = st.multiselect(
         "Select your available support:",
+
         [
             "🍚 Food Support",
             "💧 Water Support",
@@ -715,6 +846,7 @@ else:
 
     availability = st.selectbox(
         "Availability:",
+
         [
             "Available Now",
             "Available Today",
@@ -746,6 +878,27 @@ else:
             )
 
         else:
+
+            # Try existing volunteer module
+            try:
+
+                volunteer_result = match_volunteer(
+                    volunteer_name,
+                    volunteer_location,
+                    help_options,
+                    availability
+                )
+
+            except Exception:
+
+                volunteer_result = {
+                    "name": volunteer_name,
+                    "location": volunteer_location,
+                    "help_types": help_options,
+                    "availability": availability,
+                    "status": "Registered"
+                }
+
 
             st.success(
                 f"Thank you, {volunteer_name}! "
